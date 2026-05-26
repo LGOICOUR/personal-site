@@ -1,0 +1,153 @@
+---
+/**
+ * Pips — the role filter.
+ *
+ * Renders three filter buttons:
+ *   SCIENTIST · DEVELOPER · WORLDBUILDER
+ *
+ * The filter is *purely client-side*: every garden item is in the initial
+ * HTML, and the script below toggles `hidden` on items whose roles don't
+ * match. URL state is mirrored to ?filter=role1,role2 so links are shareable.
+ *
+ * Without JS, all items show — which is exactly the right behavior for
+ * crawlers and screen-readers.
+ */
+
+const ROLES = [
+  { id: "scientist", label: "Scientist" },
+  { id: "developer", label: "Developer" },
+  { id: "worldbuilder", label: "Worldbuilder" },
+] as const;
+---
+
+<nav
+  class="pips"
+  aria-label="Filter by role"
+  data-pips-root
+>
+  {
+    ROLES.map((role, i) => (
+      <>
+        {i > 0 && <span class="pip-sep" aria-hidden="true">|</span>}
+        <button
+          type="button"
+          class="pip"
+          data-pip={role.id}
+          aria-pressed="false"
+        >
+          {role.label}
+        </button>
+      </>
+    ))
+  }
+</nav>
+
+<script>
+  /**
+   * Filter behavior:
+   *   - read ?filter=role1,role2 from the URL on load
+   *   - toggle pips on click; persist to URL with history.replaceState
+   *   - show items whose data-roles intersects the active set
+   *   - if no pip is active, show everything
+   */
+  const ROLES = ["scientist", "developer", "worldbuilder"] as const;
+  type Role = (typeof ROLES)[number];
+
+  function isRole(value: string): value is Role {
+    return (ROLES as readonly string[]).includes(value);
+  }
+
+  function parseFilter(): Set<Role> {
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get("filter");
+    if (!raw) return new Set();
+    return new Set(raw.split(",").map((s) => s.trim()).filter(isRole));
+  }
+
+  function writeFilter(active: Set<Role>) {
+    const params = new URLSearchParams(window.location.search);
+    if (active.size > 0 && active.size < ROLES.length) {
+      params.set("filter", Array.from(active).join(","));
+    } else {
+      params.delete("filter");
+    }
+    const qs = params.toString();
+    const url = window.location.pathname + (qs ? `?${qs}` : "");
+    window.history.replaceState({}, "", url);
+  }
+
+  function applyFilter(active: Set<Role>) {
+    // 1. Update pip visual state
+    document.querySelectorAll<HTMLButtonElement>("[data-pip]").forEach(
+      (pip) => {
+        const role = pip.dataset.pip;
+        const isActive = !!role && isRole(role) && active.has(role);
+        pip.setAttribute("aria-pressed", String(isActive));
+        pip.classList.toggle("is-active", isActive);
+      }
+    );
+
+    // 2. Show/hide items
+    let visible = 0;
+    document.querySelectorAll<HTMLElement>("[data-roles]").forEach((el) => {
+      const roles = (el.dataset.roles || "")
+        .split(",")
+        .map((s) => s.trim())
+        .filter(isRole);
+      const matches =
+        active.size === 0 || roles.some((r) => active.has(r));
+      el.hidden = !matches;
+      if (matches) visible++;
+    });
+
+    // 3. Hide sections whose items are all hidden so the heading
+    //    doesn't dangle over an empty area
+    document.querySelectorAll<HTMLElement>("[data-section]").forEach((sec) => {
+      const items = sec.querySelectorAll<HTMLElement>("[data-roles]");
+      const anyVisible = Array.from(items).some((it) => !it.hidden);
+      sec.hidden = items.length > 0 && !anyVisible;
+    });
+
+    // 4. Toggle no-results message
+    const empty = document.querySelector<HTMLElement>("[data-no-results]");
+    if (empty) empty.hidden = visible > 0;
+  }
+
+  function init() {
+    const active = parseFilter();
+    applyFilter(active);
+
+    document.querySelectorAll<HTMLButtonElement>("[data-pip]").forEach(
+      (pip) => {
+        pip.addEventListener("click", () => {
+          const role = pip.dataset.pip;
+          if (!role || !isRole(role)) return;
+          const next = new Set(active);
+          if (next.has(role)) next.delete(role);
+          else next.add(role);
+          // mutate the closure-held set in place
+          active.clear();
+          next.forEach((r) => active.add(r));
+          writeFilter(active);
+          applyFilter(active);
+        });
+
+        // Space/Enter handled natively by <button>; nothing else needed.
+      }
+    );
+
+    // React to back/forward
+    window.addEventListener("popstate", () => {
+      const next = parseFilter();
+      active.clear();
+      next.forEach((r) => active.add(r));
+      applyFilter(active);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+</script>

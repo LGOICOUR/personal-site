@@ -1,0 +1,58 @@
+---
+title: "What modeling epilepsy taught me about writing software"
+description: "Notes on the surprisingly transferable disciplines between computational disease modeling and shipping consumer software."
+date: 2025-12-04
+roles: ["scientist", "developer"]
+# Set to false to publish — kept here as a reference for the MDX
+# essay format (prose styling, headings, blockquote, lists).
+draft: true
+---
+
+There's an obvious gap between the things you do as a PhD student
+modeling a disease and the things you do as a developer shipping
+consumer software. Different time horizons, different
+stakeholders, different definitions of "done."
+
+I want to argue the opposite, though — that the most useful
+disciplines I built during my thesis were not about epilepsy or
+even about modeling. They were about how to maintain reliable
+beliefs about a system you can only partially observe.
+
+## Three habits that ported
+
+The first is **assume your instruments lie until proven
+otherwise**. In a PhD modeling project, a "result" is one
+hyperparameter choice away from being noise. In software, a green
+test suite is one mock away from being theater. The instinct to
+ask *what would I have to believe for this measurement to be
+trustworthy* applies equally to a seizure detector and to a
+metrics dashboard.
+
+The second is **the smallest reproducible case is the unit of
+work**. In modeling, you can spend a week on a result that turns
+out to depend on a particular random seed. The fix is to refuse
+to claim anything you can't reproduce from scratch. In software
+that's the bug repro; in modeling it's the minimal example
+notebook. Same discipline.
+
+The third is **write things down for the version of you that
+shows up six months later**. Past-you and future-you are
+basically strangers. Modeling forced me to keep careful lab
+notebooks; shipping software has required me to keep careful
+change logs and ADRs. The artifact is different; the habit is
+identical.
+
+## What didn't port
+
+A lot, in fairness.
+
+- Calibration on long timescales. A modeling project is patient
+  in a way that consumer software simply isn't.
+- The freedom to pursue a question that isn't on anyone's
+  roadmap. I miss it.
+- The mental model of "results" as something you publish once
+  and defend. Software is closer to gardening than to publishing.
+
+But the habits in the first list have been my most reliable
+inheritance from grad school. They're the parts I still use
+every week.

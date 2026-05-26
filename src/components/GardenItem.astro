@@ -1,0 +1,99 @@
+---
+/**
+ * GardenItem — a single row in the Trajectory stream.
+ *
+ * Layout, on one line:
+ *
+ *   YYYY-MM-DD  |  Title (linked)            |  scientist · developer
+ *
+ * Typography:
+ *   - Date and role tags are mono (terminal family) at meta size.
+ *   - The title's font is picked by the *first* role in the
+ *     frontmatter:
+ *       scientist    → Fraunces (Nature feel)
+ *       developer    → Menlo / JetBrains (Apple Terminal feel)
+ *       worldbuilder → Cormorant Garamond (Silmarillion feel)
+ *   - Each role tag is itself a <button data-pip=…> and triggers the
+ *     same filter as the header pips. Clicking SCIENTIST anywhere
+ *     toggles the scientist filter.
+ *
+ * Description is intentionally NOT rendered — the format is one line
+ * per item. Descriptions remain in frontmatter for RSS / llms.txt.
+ */
+
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  item: CollectionEntry<"garden">;
+}
+
+const { item } = Astro.props;
+const { title, roles, date, link, internalSlug } = item.data;
+
+const href = link ?? (internalSlug ? `/writing/${internalSlug}` : null);
+const isExternal = !!link && link.startsWith("http");
+
+const primaryRole = roles[0];
+
+const iso = date.toISOString();
+// Use ISO-ish "YYYY · MM · DD" — Brander-ish but typographically tidy.
+// `toLocaleDateString` with UTC keeps the day correct regardless of
+// the visitor's timezone.
+const day = date.toLocaleDateString("en-CA", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  timeZone: "UTC",
+});
+
+const rolesAttr = roles.join(",");
+
+const ROLE_LABEL: Record<string, string> = {
+  scientist: "Scientist",
+  developer: "Developer",
+  worldbuilder: "Worldbuilder",
+};
+---
+
+<article class="item" data-roles={rolesAttr}>
+  <time class="item-date" datetime={iso}>{day}</time>
+
+  <span class="item-sep" aria-hidden="true">|</span>
+
+  <h2 class:list={["item-title", `font-${primaryRole}`]}>
+    {
+      href ? (
+        <a
+          href={href}
+          class:list={["item-link", { "is-external": isExternal }]}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {title}
+        </a>
+      ) : (
+        <span>{title}</span>
+      )
+    }
+  </h2>
+
+  <span class="item-sep" aria-hidden="true">|</span>
+
+  <ul class="item-roles" aria-label="Roles for this item">
+    {
+      roles.map((r) => (
+        <li>
+          <button
+            type="button"
+            class="item-role"
+            data-pip={r}
+            aria-pressed="false"
+            aria-label={`Filter trajectory by ${ROLE_LABEL[r] ?? r}`}
+          >
+            {ROLE_LABEL[r] ?? r}
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+</article>

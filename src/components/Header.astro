@@ -1,0 +1,17 @@
+---
+/**
+ * Header — the name as a typographic element.
+ * Pips and bio are siblings, not children, so the page can arrange them.
+ */
+
+interface Props {
+  name: string;
+}
+
+const { name } = Astro.props;
+---
+
+<header class="site-header">
+  <h1 class="site-name">{name}</h1>
+  <slot />
+</header>

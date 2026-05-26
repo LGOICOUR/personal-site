@@ -1,0 +1,74 @@
+---
+/**
+ * Sidebar — the left-third column.
+ *
+ *   [portrait]
+ *
+ *   email                 (Helvetica)
+ *   CV                    (Fraunces / Nature)
+ *   github                (Menlo / Terminal)
+ *   whitewaterlegendlore  (Cormorant / Tolkien)
+ *
+ * Every link opens in a new tab.
+ * The portrait is loaded from `public/portrait.jpg` by default.
+ */
+
+interface Props {
+  email: string;
+  cvHref: string;
+  githubHref: string;
+  wllHref: string;
+  portraitSrc?: string;
+  portraitAlt?: string;
+}
+
+const {
+  email,
+  cvHref,
+  githubHref,
+  wllHref,
+  portraitSrc = "/portrait.jpg",
+  portraitAlt = "Portrait of Luis Goicouria",
+} = Astro.props;
+---
+
+<aside class="sidebar">
+  <img
+    class="portrait"
+    src={portraitSrc}
+    alt={portraitAlt}
+    width="800"
+    height="800"
+    loading="eager"
+    decoding="async"
+  />
+
+  <nav class="sidebar-links" aria-label="Contact and links">
+    <a
+      class="sidebar-link link-email"
+      href={`mailto:${email}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={email}
+      aria-label={`Email Luis (${email})`}>email</a
+    >
+    <a
+      class="sidebar-link link-cv"
+      href={cvHref}
+      target="_blank"
+      rel="me noopener noreferrer">CV</a
+    >
+    <a
+      class="sidebar-link link-github"
+      href={githubHref}
+      target="_blank"
+      rel="me noopener noreferrer">github</a
+    >
+    <a
+      class="sidebar-link link-wll"
+      href={wllHref}
+      target="_blank"
+      rel="me noopener noreferrer">whitewaterlegendlore</a
+    >
+  </nav>
+</aside>

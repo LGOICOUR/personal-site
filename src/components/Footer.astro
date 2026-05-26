@@ -1,0 +1,15 @@
+---
+/**
+ * Footer — minimal bottom band.
+ * Copyright + theme toggle. All the link rendering moved to <Sidebar>.
+ */
+
+import ThemeToggle from "./ThemeToggle.astro";
+
+const year = new Date().getUTCFullYear();
+---
+
+<footer class="site-footer">
+  <span aria-hidden="true">© {year}</span>
+  <ThemeToggle />
+</footer>

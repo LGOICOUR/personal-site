@@ -1,0 +1,32 @@
+# build output
+dist/
+.output/
+
+# generated types
+.astro/
+
+# vercel artifacts (created on first vercel pull / link)
+.vercel/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# environment variables
+.env
+.env.production
+.env.local
+
+# macOS
+.DS_Store
+
+# editor
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+.idea/

@@ -1,0 +1,91 @@
+---
+/**
+ * Landing page.
+ *
+ *   1. Name
+ *   2. Pips (Scientist | Developer | Worldbuilder) — top-level filter
+ *   3. Bio paragraph (uniform Helvetica, all links open in new tab)
+ *   4. Trajectory — a single reverse-chronological list of items
+ *   5. Footer — minimal bottom band
+ */
+
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Sidebar from "../components/Sidebar.astro";
+import Header from "../components/Header.astro";
+import Pips from "../components/Pips.astro";
+import GardenItem from "../components/GardenItem.astro";
+import Footer from "../components/Footer.astro";
+
+const NAME = "Luis Goicouria";
+const TITLE = `${NAME} — scientist · developer · worldbuilder`;
+const DESCRIPTION =
+  "Luis Goicouria: focal-epilepsy modeling PhD, software developer at SkyPorch (Attached; SpatialCut, a visionOS-native spatial video editor), Dungeons & Dragons homebrew designer at Whitewater Legend Lore.";
+
+// Bio paragraph: uniform Helvetica. Every link opens in a new tab,
+// per Luis's preference. Only the Trajectory titles and the header
+// pips carry role-specific typefaces.
+const BIO_HTML = `
+  My PhD was in
+  <a href="https://repository.library.brown.edu/studio/item/bdr:r6mggmqr/"
+     target="_blank" rel="noopener noreferrer">disease modeling and mechanism in focal epilepsy</a>.
+  I am currently a developer at
+  <a href="https://skyporch.co"
+     target="_blank" rel="noopener noreferrer">SkyPorch</a>,
+  where we launched the health and wellness Android/iOS app
+  <a href="https://www.attachedapp.com/"
+     target="_blank" rel="noopener noreferrer">Attached</a>
+  and have been invited to Apple HQ for our work on
+  <a href="https://spatialcut.com/"
+     target="_blank" rel="noopener noreferrer">SpatialCut</a>,
+  a visionOS-native spatial video editor. I also design
+  <a href="https://whitewaterlegendlore.itch.io"
+     target="_blank" rel="noopener noreferrer">homebrew assets</a>
+  and
+  <a href="https://whitewaterlegendlore.wordpress.com/"
+     target="_blank" rel="noopener noreferrer">modules</a>
+  for Dungeons &amp; Dragons.
+`;
+
+const items = (
+  await getCollection("garden", ({ data }) => !data.draft)
+).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout title={TITLE} description={DESCRIPTION}>
+  <div class="page">
+    <Sidebar
+      email="luis.goicouria@gmail.com"
+      cvHref="/cv.pdf"
+      githubHref="https://github.com/LGOICOUR"
+      wllHref="https://whitewaterlegendlore.wordpress.com/"
+    />
+
+    <main id="main" class="main">
+      <Header name={NAME}>
+        <Pips />
+        <p class="site-bio" set:html={BIO_HTML} />
+      </Header>
+
+      <section class="trajectory">
+        <h2 class="trajectory-heading">Trajectory</h2>
+
+        <ol class="stream" role="list">
+          {
+            items.map((item) => (
+              <li>
+                <GardenItem item={item} />
+              </li>
+            ))
+          }
+        </ol>
+
+        <p class="no-results" data-no-results hidden>
+          Nothing tagged with that combination yet.
+        </p>
+      </section>
+
+      <Footer />
+    </main>
+  </div>
+</BaseLayout>

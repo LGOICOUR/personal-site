@@ -1,0 +1,213 @@
+/*
+ * Long-form prose.
+ * Applied to MDX content via the .prose wrapper on /writing/* pages.
+ * Tuned for sustained reading: ~68ch measure, generous leading,
+ * comfortable spacing between blocks.
+ */
+
+.prose {
+  max-width: var(--measure-prose);
+  font-family: var(--font-serif);
+  font-size: var(--type-md);
+  line-height: var(--leading-loose);
+  color: var(--color-text);
+  font-feature-settings: "kern", "liga", "calt", "onum";
+}
+
+.prose > * + * {
+  margin-top: var(--space-5);
+}
+
+.prose h1 {
+  font-family: var(--font-serif);
+  font-weight: var(--weight-regular);
+  font-size: var(--type-2xl);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  margin-top: var(--space-12);
+}
+
+.prose h2 {
+  font-family: var(--font-serif);
+  font-weight: var(--weight-regular);
+  font-size: var(--type-xl);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  margin-top: var(--space-12);
+  color: var(--color-text);
+}
+
+.prose h3 {
+  font-family: var(--font-serif);
+  font-weight: var(--weight-semibold);
+  font-size: var(--type-lg);
+  line-height: var(--leading-snug);
+  margin-top: var(--space-10);
+}
+
+.prose h4 {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-medium);
+  font-size: var(--type-sm);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-top: var(--space-8);
+}
+
+.prose p {
+  hyphens: auto;
+  hanging-punctuation: first last;
+  text-wrap: pretty;
+}
+
+.prose a {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-decoration-color: var(--color-rule-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color var(--duration-fast) var(--ease),
+    text-decoration-color var(--duration-fast) var(--ease);
+}
+
+.prose a:hover {
+  color: var(--color-accent);
+  text-decoration-color: var(--color-accent);
+}
+
+.prose em {
+  font-style: italic;
+}
+
+.prose strong {
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+}
+
+.prose blockquote {
+  border-left: 2px solid var(--color-rule-strong);
+  padding-left: var(--space-5);
+  color: var(--color-text-soft);
+  font-style: italic;
+  margin-left: 0;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: var(--space-6);
+}
+
+.prose li + li {
+  margin-top: var(--space-2);
+}
+
+.prose li::marker {
+  color: var(--color-text-faint);
+}
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--color-bg-elev);
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-rule);
+}
+
+.prose pre {
+  font-family: var(--font-mono);
+  font-size: var(--type-sm);
+  line-height: var(--leading-normal);
+  background: var(--color-bg-elev);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.prose pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: inherit;
+}
+
+.prose img {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-rule);
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+
+.prose figure {
+  margin: var(--space-8) 0;
+}
+
+.prose figcaption {
+  font-family: var(--font-sans);
+  font-size: var(--type-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-top: var(--space-2);
+}
+
+.prose hr {
+  margin: var(--space-10) 0;
+  border: 0;
+  text-align: center;
+}
+
+.prose hr::after {
+  content: "❦";
+  display: inline-block;
+  color: var(--color-text-faint);
+  font-size: var(--type-md);
+  font-family: var(--font-serif);
+}
+
+/* Essay frontmatter */
+
+.essay-header {
+  margin-bottom: var(--space-10);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.essay-title {
+  font-family: var(--font-serif);
+  font-weight: var(--weight-regular);
+  font-size: clamp(2rem, 4vw + 1rem, var(--type-2xl));
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  margin-bottom: var(--space-4);
+}
+
+.essay-meta {
+  display: flex;
+  gap: var(--space-4);
+  font-family: var(--font-sans);
+  font-size: var(--type-2xs);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-sans);
+  font-size: var(--type-2xs);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  margin-bottom: var(--space-10);
+  transition: color var(--duration-fast) var(--ease);
+}
+
+.back-link:hover {
+  color: var(--color-accent);
+}

@@ -1,0 +1,605 @@
+/*
+ * Global stylesheet.
+ *
+ *   1. Reset
+ *   2. Body / page chrome
+ *   3. Layout primitives
+ *   4. Header (name, pips, bio)
+ *   5. Footer (the four-font row)
+ *   6. Trajectory section + items
+ *   7. Role-typeface utility classes (.role-…)
+ *   8. Utility / accessibility
+ *
+ * Two ideas drive the visual logic:
+ *
+ *   (a) "Universal" sizing. Almost all text is at --type-base. The only
+ *       hierarchical departures are the name, the section heading, and
+ *       the slightly smaller metadata (date/tags). This deliberately
+ *       *removes* size as a hierarchy signal so that…
+ *
+ *   (b) …typeface choice can carry it instead. Each role is rendered
+ *       in a different family. A scientist title is Fraunces, a
+ *       developer title is Menlo/JetBrains, a worldbuilder title is
+ *       Cormorant Garamond. Filtering the page by role therefore
+ *       changes the typographic register of what's visible.
+ */
+
+/* ── 1. Reset ─────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern", "liga", "calt";
+  scrollbar-gutter: stable;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration-skip-ink: auto;
+}
+
+/* ── 2. Body / page chrome ────────────────────────────────────── */
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--type-base);
+  line-height: var(--leading-relaxed);
+  text-align: left;
+  transition:
+    background-color var(--duration) var(--ease),
+    color var(--duration) var(--ease);
+}
+
+::selection {
+  background: var(--color-selection);
+  color: var(--color-text);
+}
+
+/* ── 3. Layout primitives ─────────────────────────────────────── */
+
+/* Page container. The two-column grid only applies when a sidebar is
+   present (the landing). Essay pages skip the grid and stay narrow
+   for reading. */
+.page {
+  max-width: 64rem;
+  margin-inline: auto;
+  padding: var(--space-12) var(--space-6) var(--space-16);
+}
+
+@media (min-width: 48rem) {
+  .page {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-20);
+    padding-inline: var(--space-8);
+  }
+}
+
+/* Index: two-column grid, sidebar ~1/3 + main ~2/3 */
+.page:has(.sidebar) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  column-gap: var(--space-12);
+  align-items: start;
+}
+
+@media (max-width: 48rem) {
+  .page:has(.sidebar) {
+    grid-template-columns: 1fr;
+    row-gap: var(--space-10);
+  }
+}
+
+/* Essay (no sidebar): narrower reading column */
+.page:not(:has(.sidebar)) {
+  max-width: 48rem;
+}
+
+.main {
+  display: block;
+  min-width: 0;
+}
+
+/* ── 4. Header (name, pips, bio) ──────────────────────────────── */
+
+.site-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  margin-bottom: var(--space-12);
+}
+
+.site-name {
+  font-family: var(--font-helvetica);
+  font-weight: var(--weight-bold);
+  font-size: var(--type-name);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+.site-name a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-name a:hover {
+  color: var(--color-accent);
+}
+
+/* Pips: top-level role filter (one of three families) */
+
+.pips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-family: var(--font-helvetica);
+  font-size: var(--type-base);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.pip {
+  font: inherit;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid transparent;
+  padding: 1px 2px;
+  cursor: pointer;
+  transition:
+    color var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease);
+}
+
+/* Each pip's text is rendered in *its own role's* font. The header
+   pip therefore previews the typographic register selecting it will
+   switch the page into. */
+.pip[data-pip="scientist"] {
+  font-family: var(--font-nature);
+  font-variation-settings: "opsz" var(--fraunces-opsz),
+    "SOFT" var(--fraunces-soft);
+}
+.pip[data-pip="developer"] {
+  font-family: var(--font-terminal);
+}
+.pip[data-pip="worldbuilder"] {
+  font-family: var(--font-tolkien);
+}
+
+.pip:hover {
+  color: var(--color-text);
+}
+
+.pip:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+.pip.is-active {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
+.pip-sep {
+  color: var(--color-text-faint);
+  user-select: none;
+  font-family: var(--font-helvetica);
+}
+
+/* Bio paragraph */
+
+.site-bio {
+  font-family: var(--font-helvetica);
+  font-size: var(--type-base);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text);
+  max-width: var(--measure-prose);
+}
+
+.site-bio a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--color-rule-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition:
+    color var(--duration-fast) var(--ease),
+    text-decoration-color var(--duration-fast) var(--ease);
+}
+
+.site-bio a:hover {
+  color: var(--color-accent);
+  text-decoration-color: var(--color-accent);
+}
+
+/* (Bio links are intentionally NOT role-classed — they inherit the
+   bio's Helvetica. The role-typeface system is reserved for the pips
+   and Trajectory titles.) */
+
+/* ── 5. Sidebar (portrait + the four-font links column) ───────── */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  /* Optional: turn into `position: sticky; top: var(--space-8);` if
+     you want the contact info to stay visible while scrolling. */
+}
+
+.portrait {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-elev);
+  border: 1px solid var(--color-rule);
+}
+
+@media (max-width: 48rem) {
+  .portrait {
+    max-width: 16rem;
+  }
+}
+
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  font-size: var(--type-base);
+  line-height: var(--leading-snug);
+}
+
+.sidebar-link {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-decoration-color: var(--color-rule-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  /* Allow the long whitewaterlegendlore line to wrap on narrow widths */
+  overflow-wrap: anywhere;
+  transition:
+    color var(--duration-fast) var(--ease),
+    text-decoration-color var(--duration-fast) var(--ease);
+}
+
+.sidebar-link:hover {
+  color: var(--color-accent);
+  text-decoration-color: var(--color-accent);
+}
+
+/* Each sidebar link wears the font of the role it signals. */
+.sidebar-link.link-email {
+  font-family: var(--font-helvetica);
+}
+.sidebar-link.link-cv {
+  font-family: var(--font-nature);
+  font-variation-settings: "opsz" 36, "SOFT" var(--fraunces-soft);
+}
+.sidebar-link.link-github {
+  font-family: var(--font-terminal);
+  font-size: calc(var(--type-base) * 0.94);
+}
+.sidebar-link.link-wll {
+  font-family: var(--font-tolkien);
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+
+/* Minimal bottom band — copyright + theme toggle */
+.site-footer {
+  margin-top: var(--space-16);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-rule);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-family: var(--font-helvetica);
+  font-size: var(--type-meta);
+  color: var(--color-text-faint);
+}
+
+/* ── 6. Trajectory section + items ────────────────────────────── */
+
+.trajectory {
+  margin-top: var(--space-16);
+}
+
+.trajectory-heading {
+  font-family: var(--font-helvetica);
+  font-weight: var(--weight-bold);
+  font-size: var(--type-heading);
+  letter-spacing: var(--tracking-tight);
+  margin-bottom: var(--space-6);
+  color: var(--color-text);
+}
+
+.stream {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Items use a 5-column grid:
+ *   date | sep | title | sep | roles
+ * Each separator lives in its own column so when the title wraps to
+ * multiple lines, the `|` stays baseline-aligned at the top, never
+ * stranded at the end of the last line.
+ *
+ * On narrow screens, collapse to a single column and hide separators. */
+.item {
+  display: grid;
+  grid-template-columns:
+    max-content
+    max-content
+    minmax(0, 1fr)
+    max-content
+    max-content;
+  column-gap: var(--space-2);
+  align-items: baseline;
+  padding: var(--space-2) 0;
+  line-height: var(--leading-snug);
+}
+
+.item[hidden] {
+  display: none;
+}
+
+.item-date {
+  font-family: var(--font-terminal);
+  font-size: var(--type-meta);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.item-sep {
+  color: var(--color-text-faint);
+  font-family: var(--font-helvetica);
+  user-select: none;
+}
+
+.item-title {
+  font-weight: var(--weight-regular);
+  font-size: var(--type-base);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  /* font-family is set per-role on the element below */
+  margin: 0;
+  min-width: 0;
+}
+
+@media (max-width: 36rem) {
+  .item {
+    grid-template-columns: 1fr;
+    column-gap: 0;
+    row-gap: var(--space-1);
+  }
+  .item-sep {
+    display: none;
+  }
+}
+
+.item-title a {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-decoration-color: var(--color-rule-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition:
+    color var(--duration-fast) var(--ease),
+    text-decoration-color var(--duration-fast) var(--ease);
+}
+
+.item-title a:hover {
+  color: var(--color-accent);
+  text-decoration-color: var(--color-accent);
+}
+
+.item-title a.is-external::after {
+  content: " ↗";
+  font-family: var(--font-helvetica);
+  color: var(--color-text-faint);
+  font-size: 0.85em;
+  margin-left: 0.1em;
+}
+
+/* Role-typeface variants for the item title */
+
+.item-title.font-scientist {
+  font-family: var(--font-nature);
+  font-variation-settings: "opsz" var(--fraunces-opsz),
+    "SOFT" var(--fraunces-soft);
+  font-weight: var(--weight-regular);
+}
+
+.item-title.font-developer {
+  font-family: var(--font-terminal);
+  font-size: calc(var(--type-base) * 0.96);
+}
+
+.item-title.font-worldbuilder {
+  font-family: var(--font-tolkien);
+  font-size: calc(var(--type-base) * 1.05);
+  font-weight: var(--weight-medium);
+  font-style: italic;
+}
+
+/* Item-level role tags — themselves clickable pips */
+
+.item-roles {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+.item-roles li {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.item-roles li + li::before {
+  content: "·";
+  color: var(--color-text-faint);
+  margin: 0 var(--space-1);
+}
+
+.item-role {
+  font: inherit;
+  font-size: var(--type-meta);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+  padding: 0;
+  transition:
+    color var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease);
+}
+
+.item-role[data-pip="scientist"] {
+  font-family: var(--font-nature);
+  font-variation-settings: "opsz" 16, "SOFT" var(--fraunces-soft);
+}
+.item-role[data-pip="developer"] {
+  font-family: var(--font-terminal);
+}
+.item-role[data-pip="worldbuilder"] {
+  font-family: var(--font-tolkien);
+  font-style: italic;
+}
+
+.item-role:hover {
+  color: var(--color-text);
+  border-bottom-color: var(--color-rule-strong);
+}
+
+.item-role:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+.item-role.is-active {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
+/* No-results message */
+
+.no-results {
+  font-family: var(--font-helvetica);
+  font-style: italic;
+  font-size: var(--type-base);
+  color: var(--color-text-muted);
+  padding: var(--space-6) 0;
+}
+
+.no-results[hidden] {
+  display: none;
+}
+
+/* ── 7. Utility / accessibility ───────────────────────────────── */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-bg);
+  color: var(--color-accent);
+  font-family: var(--font-helvetica);
+  font-size: var(--type-meta);
+  text-decoration: underline;
+  transform: translateY(-200%);
+  transition: transform var(--duration) var(--ease);
+  z-index: 100;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* Theme toggle (kept in footer, quiet) */
+
+.theme-toggle {
+  font-family: var(--font-helvetica);
+  font-size: var(--type-meta);
+  color: var(--color-text-faint);
+  border-bottom: 1px solid transparent;
+  padding: 0;
+  transition:
+    color var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease);
+}
+
+.theme-toggle:hover {
+  color: var(--color-text);
+  border-bottom-color: var(--color-rule-strong);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

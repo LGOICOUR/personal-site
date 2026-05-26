@@ -1,0 +1,73 @@
+---
+/**
+ * ThemeToggle — text-based color scheme switch.
+ *
+ * Initial label is set client-side to match the resolved theme.
+ * Persists the user's choice in localStorage under `theme`.
+ * Defers to prefers-color-scheme until the user makes a choice.
+ */
+---
+
+<button
+  type="button"
+  class="theme-toggle"
+  data-theme-toggle
+  aria-label="Toggle color theme"
+>
+  <span data-theme-label>Theme</span>
+</button>
+
+<script>
+  type Theme = "light" | "dark";
+
+  function resolved(): Theme {
+    const explicit = document.documentElement.dataset.theme as
+      | Theme
+      | undefined;
+    if (explicit === "light" || explicit === "dark") return explicit;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  }
+
+  function label(t: Theme): string {
+    // Show the *current* mode; click flips to the other.
+    return t === "dark" ? "Dark" : "Light";
+  }
+
+  function init() {
+    const btn = document.querySelector<HTMLButtonElement>(
+      "[data-theme-toggle]"
+    );
+    const span = btn?.querySelector<HTMLElement>("[data-theme-label]");
+    if (!btn || !span) return;
+
+    span.textContent = label(resolved());
+
+    btn.addEventListener("click", () => {
+      const next: Theme = resolved() === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      try {
+        localStorage.setItem("theme", next);
+      } catch (_) {}
+      span.textContent = label(next);
+    });
+
+    // Track system theme changes only if the user hasn't picked one.
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    media.addEventListener("change", () => {
+      try {
+        if (localStorage.getItem("theme")) return;
+      } catch (_) {
+        return;
+      }
+      span.textContent = label(resolved());
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+</script>

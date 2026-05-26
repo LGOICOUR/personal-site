@@ -1,0 +1,156 @@
+/*
+ * Design tokens.
+ *
+ * Type strategy
+ * -------------
+ * Four font families, each chosen for what it *signals*:
+ *   helvetica  — identity. Used for the name, the bio body, and the
+ *                email link in the footer.
+ *   nature     — scientist register. Fraunces (variable) tuned to a
+ *                slabby Nature-masthead character. Used for the title
+ *                of any scientist-tagged item and the CV link.
+ *   terminal   — developer register. Menlo on Mac (real Apple
+ *                Terminal default), JetBrains Mono Variable as the
+ *                cross-platform fallback. Used for developer-tagged
+ *                titles and the GitHub link.
+ *   tolkien    — worldbuilder register. Cormorant Garamond, the
+ *                fantasy-book-cover serif. Used for worldbuilder-tagged
+ *                titles and the whitewaterlegendlore link.
+ *
+ * Sizing strategy: nearly universal.
+ *   - Body, item titles, dates, role pips all share one body size.
+ *   - The page name is the only distinctly larger element.
+ *   - The Trajectory heading is a small step above body.
+ *   This shifts the *only* hierarchical signal onto typeface choice,
+ *   which is what the role-typeface system needs to do its work.
+ */
+
+:root {
+  /* ── Type families ────────────────────────────────────────────── */
+  --font-helvetica: Helvetica, "Helvetica Neue", Arial, system-ui,
+    sans-serif;
+  --font-nature: "Fraunces Variable", "Fraunces", "Photina MT", "Old Standard TT",
+    Georgia, "Times New Roman", serif;
+  --font-terminal: Menlo, "JetBrains Mono Variable", "JetBrains Mono",
+    "SF Mono", ui-monospace, Consolas, monospace;
+  --font-tolkien: "Cormorant Garamond", "EB Garamond", Garamond,
+    "Hoefler Text", "Iowan Old Style", Baskerville, serif;
+
+  /* The body uses Helvetica as the identity register; role fonts kick
+   * in only where roles are explicit (inline links, item titles). */
+  --font-body: var(--font-helvetica);
+
+  /* ── Type scale: universal-ish ────────────────────────────────── */
+  --type-base: 1.0625rem; /* 17px — body, item titles, meta, all of it */
+  --type-meta: 0.9375rem; /* 15px — dates, pip role tags (slightly smaller) */
+  --type-heading: 1.5rem; /* 24px — "Trajectory" section heading */
+  --type-name: clamp(2.25rem, 5vw + 1rem, 3.25rem); /* page name */
+
+  /* ── Line heights ─────────────────────────────────────────────── */
+  --leading-tight: 1.15;
+  --leading-snug: 1.3;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.65;
+  --leading-loose: 1.8;
+
+  /* ── Weights ──────────────────────────────────────────────────── */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* ── Tracking ─────────────────────────────────────────────────── */
+  --tracking-tight: -0.015em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+
+  /* Fraunces axes — tune the Nature feel once, here. */
+  --fraunces-soft: 50;     /* 0 = sharp, 100 = soft. Mid keeps slab character. */
+  --fraunces-opsz: 72;     /* display-ish optical size for titles */
+
+  /* ── Spacing (4px base) ───────────────────────────────────────── */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* ── Measure ──────────────────────────────────────────────────── */
+  --measure: 64ch;
+  --measure-prose: 68ch;
+  --measure-page: 46rem; /* outer page column — left-aligned, not centered */
+
+  /* ── Radii ────────────────────────────────────────────────────── */
+  --radius-sm: 2px;
+
+  /* ── Motion ───────────────────────────────────────────────────── */
+  --ease: cubic-bezier(0.2, 0.0, 0.0, 1.0);
+  --duration-fast: 120ms;
+  --duration: 200ms;
+
+  /* ── Colors: light (default) ──────────────────────────────────── */
+  --color-bg: #faf8f2;        /* warm paper */
+  --color-bg-elev: #f3efe5;
+  --color-text: #1b1a17;
+  --color-text-soft: #3f3c36;
+  --color-text-muted: #6f6a5e;
+  --color-text-faint: #9b9588;
+  --color-rule: #e3ddd0;
+  --color-rule-strong: #c9c2b1;
+  --color-accent: #a04a26;
+  --color-accent-soft: #cf6e3f;
+  --color-selection: #e8d6b0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #14130f;
+    --color-bg-elev: #1f1d18;
+    --color-text: #e9e3d3;
+    --color-text-soft: #cbc5b6;
+    --color-text-muted: #8b8576;
+    --color-text-faint: #5b564b;
+    --color-rule: #2c2922;
+    --color-rule-strong: #3f3b31;
+    --color-accent: #e08454;
+    --color-accent-soft: #c46c3d;
+    --color-selection: #3d3422;
+  }
+}
+
+[data-theme="light"] {
+  --color-bg: #faf8f2;
+  --color-bg-elev: #f3efe5;
+  --color-text: #1b1a17;
+  --color-text-soft: #3f3c36;
+  --color-text-muted: #6f6a5e;
+  --color-text-faint: #9b9588;
+  --color-rule: #e3ddd0;
+  --color-rule-strong: #c9c2b1;
+  --color-accent: #a04a26;
+  --color-accent-soft: #cf6e3f;
+  --color-selection: #e8d6b0;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --color-bg: #14130f;
+  --color-bg-elev: #1f1d18;
+  --color-text: #e9e3d3;
+  --color-text-soft: #cbc5b6;
+  --color-text-muted: #8b8576;
+  --color-text-faint: #5b564b;
+  --color-rule: #2c2922;
+  --color-rule-strong: #3f3b31;
+  --color-accent: #e08454;
+  --color-accent-soft: #c46c3d;
+  --color-selection: #3d3422;
+  color-scheme: dark;
+}

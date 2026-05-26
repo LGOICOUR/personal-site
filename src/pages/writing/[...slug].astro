@@ -1,0 +1,61 @@
+---
+/**
+ * Long-form essay route.
+ * Renders MDX from the `writing` collection at /writing/<slug>.
+ */
+
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import "../../styles/prose.css";
+
+export async function getStaticPaths() {
+  const essays = await getCollection(
+    "writing",
+    ({ data }) => !data.draft
+  );
+  return essays.map((essay) => ({
+    params: { slug: essay.id },
+    props: { essay },
+  }));
+}
+
+interface Props {
+  essay: CollectionEntry<"writing">;
+}
+
+const { essay } = Astro.props;
+const { Content } = await render(essay);
+const { title, description, date } = essay.data;
+
+const iso = date.toISOString();
+const formatted = date.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  timeZone: "UTC",
+});
+---
+
+<BaseLayout
+  title={`${title} — Luis Goicouria`}
+  description={description}
+  ogType="article"
+  publishedAt={date}
+>
+  <div class="page">
+    <a class="back-link" href="/" rel="home" target="_blank">← Home</a>
+
+    <article>
+      <header class="essay-header">
+        <h1 class="essay-title">{title}</h1>
+        <div class="essay-meta">
+          <time datetime={iso}>{formatted}</time>
+        </div>
+      </header>
+
+      <main id="main" class="prose">
+        <Content />
+      </main>
+    </article>
+  </div>
+</BaseLayout>
