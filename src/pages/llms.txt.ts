@@ -20,14 +20,24 @@ export const GET: APIRoute = async ({ site }) => {
     await getCollection("writing", ({ data }) => !data.draft)
   ).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
+  // Match the visible labels on the landing page exactly. If you
+  // rename a role on the site (Pips.astro / GardenItem.astro), rename
+  // it here too.
+  const ROLE_LABEL: Record<string, string> = {
+    scientist: "Scientist",
+    developer: "Lead Developer",
+    worldbuilder: "Worldbuilder",
+  };
+  const labelRoles = (rs: readonly string[]) =>
+    rs.map((r) => ROLE_LABEL[r] ?? r).join(", ");
+
   const fmtItem = (i: (typeof garden)[number]) => {
     const url = i.data.link
       ? i.data.link
       : i.data.internalSlug
         ? `${origin}/writing/${i.data.internalSlug}`
         : "";
-    const roles = i.data.roles.join(", ");
-    return `- [${i.data.title}](${url}) — ${i.data.description} _(${roles})_`;
+    return `- [${i.data.title}](${url}) — ${i.data.description} _(${labelRoles(i.data.roles)})_`;
   };
 
   const fmtEssay = (e: (typeof writing)[number]) =>

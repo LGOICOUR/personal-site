@@ -45,7 +45,7 @@ const svg = `
     <text x="80" y="365" fill="${MUTED}">
       <tspan font-family="Times, 'Times New Roman', serif">Scientist</tspan>
       <tspan font-family="Helvetica, Arial, sans-serif" fill="${FAINT}">  |  </tspan>
-      <tspan font-family="Menlo, 'Courier New', monospace">Developer</tspan>
+      <tspan font-family="Menlo, 'Courier New', monospace">Lead Developer</tspan>
       <tspan font-family="Helvetica, Arial, sans-serif" fill="${FAINT}">  |  </tspan>
       <tspan font-family="Times, 'Times New Roman', serif" font-style="italic">Worldbuilder</tspan>
     </text>
