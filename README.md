@@ -1,4 +1,4 @@
-# goicouria.com
+# luisgoicouria.com
 
 A single-page-feeling digital garden. Astro + TypeScript + MDX + hand-written
 CSS, self-hosted variable fonts, deployed to Vercel.
@@ -43,11 +43,14 @@ src/
     global.css             # layout, components, utility
     prose.css              # long-form essay typography
 public/
-  portrait.svg             # placeholder portrait — replace with a real photo
+  portrait.jpg             # sidebar portrait (EXIF stripped — keep it that way)
+  cv.pdf                   # the general CV, served at /cv.pdf (sidebar links here)
+  og-default.png           # 1200×630 social card — regenerate via scripts/generate-og.mjs
   robots.txt
   favicon.svg
-  cv.pdf                   # add yours here; the sidebar's CV link points to /cv.pdf
-  og-default.png           # add a 1200×630 OG image
+scripts/
+  generate-og.mjs          # renders og-default.png; run after identity copy changes
+DEPLOY.md                  # launch checklist + DNS/Vercel troubleshooting
 ```
 
 ## Adding a new garden item
@@ -59,11 +62,13 @@ Create `src/content/garden/<slug>.md`:
 title: "The thing's title"
 description: "One to three sentences. This appears in the stream."
 roles: ["scientist"]            # any subset of scientist | developer | worldbuilder
+                                # ("developer" displays as "Lead Developer"; the
+                                #  FIRST role picks the title's typeface)
 date: 2026-05-10                # ISO date
 link: "https://example.org/x"   # external URL — OR omit and use internalSlug
 # internalSlug: "essay-slug"    # to link to /writing/<slug> instead
 # thumbnail: "/images/x.png"    # optional, place file in public/images/
-# featured: true                # appears under "Selected"
+# featured: true                # reserved — no "Selected" section currently renders
 # draft: true                   # hidden from build until ready
 ---
 
@@ -160,33 +165,28 @@ A short tour, in case you want to iterate the visuals:
 
 ## Deploy (Vercel)
 
-The project is a static site by default — `npm run build` outputs `./dist`.
+Already wired: the repo is
+[LGOICOUR/personal-site](https://github.com/LGOICOUR/personal-site) and
+every push to `main` auto-deploys via Vercel (~30 s). `SITE` in
+[astro.config.mjs](astro.config.mjs) is set to the production domain;
+it drives canonical URLs, sitemap, RSS, and OG. The apex
+`luisgoicouria.com` 308-redirects to `www.luisgoicouria.com`.
 
-1. Push to GitHub.
-2. Import the repo in Vercel.
-3. Framework preset: **Astro** (auto-detected).
-4. No env vars needed for the default build.
-5. Set the production domain. Update `SITE` in
-   [astro.config.mjs](astro.config.mjs) to match — this affects canonical
-   URLs, sitemap, RSS, and OG.
+The build is fully static (`npm run build` → `./dist`), so for
+non-Vercel hosts `dist/` is plain files; any CDN works.
 
-For non-Vercel hosts, `dist/` is plain static files; any CDN works.
-
-## Things to swap out
+## Editing the identity bits
 
 - `NAME`, `TITLE`, `DESCRIPTION`, `BIO_HTML` in
-  [src/pages/index.astro](src/pages/index.astro). The bio is plain HTML
-  with one rule: inline links should carry a `role-scientist`,
-  `role-developer`, or `role-worldbuilder` class so they pick up the
-  matching font.
-- The footer props `email`, `cvHref`, `githubHref`, `wllHref` on the
+  [src/pages/index.astro](src/pages/index.astro). The bio is plain
+  HTML in uniform Helvetica — its inline links deliberately carry
+  **no** role classes (see Design → Bio above).
+- The Sidebar props `email`, `cvHref`, `githubHref`, `wllHref` on the
   same page.
-- The seed items in [src/content/garden/](src/content/garden/) — about
-  half of them link to placeholder URLs that you'll want to fix.
-- The seed essay in [src/content/writing/](src/content/writing/).
-- `public/cv.pdf` — drop in your CV.
-- `public/og-default.png` — 1200×630 OG image.
-- `SITE` in [astro.config.mjs](astro.config.mjs).
+- `public/cv.pdf` — replace in place; keep the `/cv.pdf` path so every
+  existing link (LinkedIn, sent applications) keeps resolving.
+- `public/og-default.png` — regenerate with
+  `node scripts/generate-og.mjs` after identity copy changes.
 - Favicon at [public/favicon.svg](public/favicon.svg).
 
 ## Notes
